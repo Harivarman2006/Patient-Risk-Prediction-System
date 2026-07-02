@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Readmission Risk AI - Clinical Decision Support</title>
+    <!-- Google Fonts: Outfit (Headings) & Inter (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i data-lucide="shield-alert" class="icon-accent"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>Aegis Risk AI</h1>
+                    <span>Clinical Decision Support</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="calculator">
+                    <i data-lucide="activity"></i>
+                    <span>Risk Calculator</span>
+                </button>
+                <button class="nav-btn" data-tab="cohort-analytics">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span>Cohort Analytics</span>
+                </button>
+                <button class="nav-btn" data-tab="model-performance">
+                    <i data-lucide="brain-circuit"></i>
+                    <span>Model Performance</span>
+                </button>
+                <button class="nav-btn" data-tab="history">
+                    <i data-lucide="history"></i>
+                    <span>Saved Evaluations</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="model-status">
+                    <span class="status-indicator online"></span>
+                    <span class="status-text">Logistic-Regression Model V1.0</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h2 id="tab-title">Patient Risk Calculator</h2>
+                    <p id="tab-description">Assess 30-day hospital readmission risk for discharged patients using machine learning models.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="quick-stats">
+                        <span class="quick-stat-item">
+                            <i data-lucide="users" class="stat-icon"></i>
+                            <strong id="header-cohort-size">5,000</strong> Cohort Size
+                        </span>
+                        <span class="quick-stat-item">
+                            <i data-lucide="trending-up" class="stat-icon warning"></i>
+                            <strong id="header-readmit-rate">32.3%</strong> Base Readmit Rate
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Panels -->
+            <div class="content-panel active" id="tab-calculator">
+                <div class="calculator-layout">
+                    <!-- Form Panel -->
+                    <div class="card form-card">
+                        <div class="card-header">
+                            <h3><i data-lucide="clipboard-list"></i> Patient Admission Details</h3>
+                            <button type="button" class="btn btn-secondary btn-xs" id="btn-fill-random">
+                                <i data-lucide="dice-5"></i> Demo Patient
+                            </button>
+                        </div>
+                        <form id="risk-calculator-form" class="calculator-form">
+                            <!-- Section 1: Demographics -->
+                            <div class="form-section">
+                                <h4>1. Demographics</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="age">Age (Years)</label>
+                                        <div class="range-slider-container">
+                                            <input type="range" id="age" name="age" min="30" max="90" value="60" class="slider">
+                                            <span class="slider-val" id="age-val">60</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <div class="radio-group">
+                                            <label class="radio-label">
+                                                <input type="radio" name="gender" value="Female" checked>
+                                                <span>Female</span>
+                                            </label>
+                                            <label class="radio-label">
+                                                <input type="radio" name="gender" value="Male">
+                                                <span>Male</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 2: Index Stay Details -->
+                            <div class="form-section">
+                                <h4>2. Index Hospital Stay</h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="time_in_hospital">Time in Hospital (Days)</label>
+                                        <div class="range-slider-container">
+                                            <input type="range" id="time_in_hospital" name="time_in_hospital" min="1" max="14" value="4" class="slider">
+                                            <span class="slider-val" id="time_in_hospital-val">4</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_lab_procedures">Lab Procedures Count</label>
+                                        <div class="range-slider-container">
+                                            <input type="range" id="num_lab_procedures" name="num_lab_procedures" min="1" max="100" value="42" class="slider">
+                                            <span class="slider-val" id="num_lab_procedures-val">42</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_procedures">Non-Lab Procedures Count</label>
+                                        <div class="number-input">
+                                            <button type="button" class="btn-num-dec">-</button>
+                                            <input type="number" id="num_procedures" name="num_procedures" min="0" max="6" value="1" readonly>
+                                            <button type="button" class="btn-num-inc">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_medications">Administered Medications</label>
+                                        <div class="range-slider-container">
+                                            <input type="range" id="num_medications" name="num_medications" min="1" max="50" value="15" class="slider">
+                                            <span class="slider-val" id="num_medications-val">15</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 3: Medical History & Diagnoses -->
+                            <div class="form-section">
+                                <h4>3. Medical History & Diagnosis</h4>
+                                <div class="form-grid">
+                                    <div class="form-group span-2">
+                                        <label for="primary_diagnosis">Primary Admitting Diagnosis</label>
+                                        <select id="primary_diagnosis" name="primary_diagnosis">
+                                            <option value="Circulatory">Circulatory (Heart Failure, MI, Hypertension)</option>
+                                            <option value="Respiratory">Respiratory (Pneumonia, COPD, Asthma)</option>
+                                            <option value="Digestive">Digestive (Gastroenteritis, Ulcers, Gallbladder)</option>
+                                            <option value="Diabetes" selected>Diabetes & Endocrine</option>
+                                            <option value="Injury">Injury, Poisoning & Complications</option>
+                                            <option value="Musculoskeletal">Musculoskeletal System (Arthritis, Joint Replacement)</option>
+                                            <option value="Genitourinary">Genitourinary (UTI, Kidney Disease)</option>
+                                            <option value="Neoplasms">Neoplasms (Oncology / Cancer)</option>
+                                            <option value="Other">Other Miscellaneous Diagnosis</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="number_diagnoses">Total Recorded Diagnoses</label>
+                                        <div class="number-input">
+                                            <button type="button" class="btn-num-dec">-</button>
+                                            <input type="number" id="number_diagnoses" name="number_diagnoses" min="1" max="16" value="7" readonly>
+                                            <button type="button" class="btn-num-inc">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 4: Healthcare Utilization (Past 12 Months) -->
+                            <div class="form-section">
+                                <h4>4. Healthcare Utilization (Past 12 Months)</h4>
+                                <div class="form-grid-3">
+                                    <div class="form-group">
+                                        <label for="number_outpatient">Outpatient Visits</label>
+                                        <div class="number-input">
+                                            <button type="button" class="btn-num-dec">-</button>
+                                            <input type="number" id="number_outpatient" name="number_outpatient" min="0" max="10" value="0" readonly>
+                                            <button type="button" class="btn-num-inc">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="number_emergency">Emergency Visits</label>
+                                        <div class="number-input">
+                                            <button type="button" class="btn-num-dec">-</button>
+                                            <input type="number" id="number_emergency" name="number_emergency" min="0" max="10" value="0" readonly>
+                                            <button type="button" class="btn-num-inc">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="number_inpatient">Inpatient Admissions</label>
+                                        <div class="number-input">
+                                            <button type="button" class="btn-num-dec">-</button>
+                                            <input type="number" id="number_inpatient" name="number_inpatient" min="0" max="10" value="0" readonly>
+                                            <button type="button" class="btn-num-inc">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section 5: Treatments & Indicators -->
+                            <div class="form-section">
+                                <h4>5. Lab Indicators & Treatment Changes</h4>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="high_A1C" name="high_A1C">
+                                        <div class="checkbox-content">
+                                            <i data-lucide="test-tube-2"></i>
+                                            <div class="checkbox-text">
+                                                <strong>Elevated HbA1c</strong>
+                                                <span>A1C level > 8% or > 7%</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="med_change" name="med_change" checked>
+                                        <div class="checkbox-content">
+                                            <i data-lucide="git-compare"></i>
+                                            <div class="checkbox-text">
+                                                <strong>Medication Change</strong>
+                                                <span>Dosage changed/adjusted during stay</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="checkbox-card">
+                                        <input type="checkbox" id="on_diabetes_med" name="on_diabetes_med" checked>
+                                        <div class="checkbox-content">
+                                            <i data-lucide="pill"></i>
+                                            <div class="checkbox-text">
+                                                <strong>Diabetes Medication</strong>
+                                                <span>Prescribed active diabetic drugs</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Submission buttons -->
+                            <div class="form-actions">
+                                <button type="reset" class="btn btn-secondary">Reset Form</button>
+                                <button type="submit" class="btn btn-primary btn-glow">
+                                    <i data-lucide="calculator"></i> Predict Readmission Risk
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Result Panel -->
+                    <div class="results-container">
+                        <!-- Placeholder Card -->
+                        <div class="card result-placeholder" id="result-placeholder">
+                            <i data-lucide="stethoscope"></i>
+                            <h3>Patient Evaluation Required</h3>
+                            <p>Complete the patient admission form and click "Predict Readmission Risk" to generate an AI risk analysis, factor breakdown, and clinical recommendation care plan.</p>
+                        </div>
+
+                        <!-- Real Results Content (Hidden by default) -->
+                        <div class="result-details" id="result-details" style="display: none;">
+                            <!-- Risk score summary -->
+                            <div class="card risk-score-card">
+                                <div class="risk-gauge-wrapper">
+                                    <svg class="risk-gauge" viewBox="0 0 120 120">
+                                        <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                                        <circle class="gauge-fill" id="gauge-fill-circle" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+                                    </svg>
+                                    <div class="gauge-content">
+                                        <span class="gauge-value" id="risk-score-value">0%</span>
+                                        <span class="gauge-label">Readmit Probability</span>
+                                    </div>
+                                </div>
+                                <div class="risk-badge-container">
+                                    <div class="risk-badge" id="risk-badge-level">Low Risk</div>
+                                    <p class="risk-interpretation" id="risk-interpretation-text">
+                                        The patient has a low probability of readmission within 30 days. Standard discharge protocols apply.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Saved notification & actions -->
+                            <div class="result-actions-bar">
+                                <div class="patient-id-tag">
+                                    <i data-lucide="user"></i> Patient: <strong id="patient-id-display">P10023</strong>
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn btn-secondary btn-sm" id="btn-save-record">
+                                        <i data-lucide="save"></i> Save to Evaluation Log
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" id="btn-print-report">
+                                        <i data-lucide="printer"></i> Print Report
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Explainable Risk Breakdown -->
+                            <div class="card explainable-card">
+                                <div class="card-header">
+                                    <h3><i data-lucide="alert-circle"></i> Key Risk Factor Contributions</h3>
+                                </div>
+                                <div class="explainable-body">
+                                    <p class="explainable-intro">
+                                        This model is fully explainable. Below is a breakdown of how the patient's individual parameters shifted their risk score from the baseline:
+                                    </p>
+                                    <div class="contributions-list" id="contributions-list">
+                                        <!-- Contributions generated dynamically in JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Clinical Care Plan -->
+                            <div class="card care-plan-card">
+                                <div class="card-header">
+                                    <h3><i data-lucide="heart-handshake"></i> Tailored Clinical Care Plan</h3>
+                                </div>
+                                <div class="care-plan-body">
+                                    <p class="care-plan-intro">
+                                        Based on the clinical parameters and predicted risk score, we recommend the following discharge transition interventions:
+                                    </p>
+                                    <ul class="care-plan-list" id="care-plan-list">
+                                        <!-- Care plan items generated dynamically in JS -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Cohort Analytics -->
+            <div class="content-panel" id="tab-cohort-analytics">
+                <div class="analytics-layout">
+                    <!-- Dashboard Statistics Cards -->
+                    <div class="stats-grid">
+                        <div class="card stat-card">
+                            <span class="stat-title">Database Records</span>
+                            <span class="stat-number">5,000</span>
+                            <span class="stat-sub">Synthetic Patient Admissions</span>
+                        </div>
+                        <div class="card stat-card">
+                            <span class="stat-title">Cohort Readmission Rate</span>
+                            <span class="stat-number">32.26%</span>
+                            <span class="stat-sub">1,613 patients readmitted</span>
+                        </div>
+                        <div class="card stat-card">
+                            <span class="stat-title">Average Hospital Stay</span>
+                            <span class="stat-number">3.93 Days</span>
+                            <span class="stat-sub">Range: 1 - 14 Days</span>
+                        </div>
+                        <div class="card stat-card">
+                            <span class="stat-title">Average Patient Age</span>
+                            <span class="stat-number">60.2 Years</span>
+                            <span class="stat-sub">Range: 30 - 90 Years</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Charts Section -->
+                    <div class="analytics-charts-grid">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="percent"></i> Readmission Rate by Prior Admissions</h3>
+                            </div>
+                            <div class="chart-container-custom">
+                                <!-- Dynamic bars for Inpatient visits readmission risk -->
+                                <div class="bar-chart-custom">
+                                    <div class="bar-group">
+                                        <span class="bar-label">0 Prior Inpatient Visits</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar-progress" style="width: 24.6%;"></div>
+                                            <span class="bar-val">24.6%</span>
+                                        </div>
+                                    </div>
+                                    <div class="bar-group">
+                                        <span class="bar-label">1 Prior Inpatient Visit</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar-progress danger" style="width: 53.8%;"></div>
+                                            <span class="bar-val">53.8%</span>
+                                        </div>
+                                    </div>
+                                    <div class="bar-group">
+                                        <span class="bar-label">2 Prior Inpatient Visits</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar-progress critical" style="width: 79.5%;"></div>
+                                            <span class="bar-val">79.5%</span>
+                                        </div>
+                                    </div>
+                                    <div class="bar-group">
+                                        <span class="bar-label">3+ Prior Inpatient Visits</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar-progress critical animate-glow" style="style-placeholder; width: 92.1%;"></div>
+                                            <span class="bar-val">92.1%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="chart-caption">
+                                    Notice the exponential increase in readmission risk as the number of prior inpatient admissions in the past year increases. Inpatient history is the strongest predictor in the model.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="pie-chart"></i> Diagnosis Cohort Distribution & Readmit Rates</h3>
+                            </div>
+                            <div class="chart-container-custom">
+                                <table class="table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Admitting Diagnosis</th>
+                                            <th>% of Cohort</th>
+                                            <th>Readmission Rate</th>
+                                            <th>Risk Weight</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Circulatory (HF, MI, etc.)</strong></td>
+                                            <td>30.1%</td>
+                                            <td><span class="indicator-high">35.4%</span></td>
+                                            <td><span class="badge badge-danger">+0.40</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Diabetes & Endocrine</strong></td>
+                                            <td>8.2%</td>
+                                            <td><span class="indicator-critical">43.2%</span></td>
+                                            <td><span class="badge badge-danger">+0.50</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Respiratory (COPD, Pneumonia)</strong></td>
+                                            <td>14.0%</td>
+                                            <td><span class="indicator-high">32.8%</span></td>
+                                            <td><span class="badge badge-warning">+0.30</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Genitourinary (UTI, Kidney)</strong></td>
+                                            <td>4.9%</td>
+                                            <td><span class="indicator-medium">31.2%</span></td>
+                                            <td><span class="badge badge-info">+0.15</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Digestive</strong></td>
+                                            <td>9.1%</td>
+                                            <td><span class="indicator-medium">28.7%</span></td>
+                                            <td><span class="badge badge-info">+0.10</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Injury & Poisoning</strong></td>
+                                            <td>6.9%</td>
+                                            <td><span class="indicator-low">21.5%</span></td>
+                                            <td><span class="badge badge-success">-0.20</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Musculoskeletal</strong></td>
+                                            <td>5.0%</td>
+                                            <td><span class="indicator-low">17.8%</span></td>
+                                            <td><span class="badge badge-success">-0.35</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Other</strong></td>
+                                            <td>21.8%</td>
+                                            <td><span class="indicator-medium">29.4%</span></td>
+                                            <td><span class="badge badge-neutral">0.00</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Model Performance -->
+            <div class="content-panel" id="tab-model-performance">
+                <div class="performance-layout">
+                    <!-- Model details -->
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i data-lucide="cog"></i> Model Technical Details</h3>
+                            </div>
+                            <div class="card-body text-layout">
+                                <p>
+                                    The risk engine uses a <strong>Logistic Regression model</strong> with L2 regularization trained on 5,000 synthetic patient records. The synthetic records statistically mimic patterns observed in the clinical UCI Diabetic Readmission dataset.
+                                </p>
+                                <p>
+                                    To generate predictions in the web browser, patient features are standardized and computed using the logistic sigmoid function:
+                                </p>
+                                <div class="math-box">
+                                    $$P(\text{Readmission}) = \sigma(\mathbf{w}^T \mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^T \mathbf{x} + b)}}$$
+                                </div>
+                                <p>
+                                    Where:
+                                </p>
+                                <ul>
+                                    <li>\(\mathbf{x}\) is the feature vector (preprocessed matching the training pipeline)</li>
+                                    <li>\(\mathbf{w}\) is the model weights (coefficients)</li>
+                                    <li>\(b\) is the intercept (\(-0.7837\))</li>
+                                </ul>
+                                
+                                <h4 class="sub-header-perf">Model Evaluation Metrics (Test Set)</h4>
+                                <div class="metrics-grid-mini">
+                                    <div class="metric-mini-item">
+                                        <span class="metric-mini-val" id="model-auc-val">0.679</span>
+                                        <span class="metric-mini-lbl">ROC-AUC</span>
+                                    </div>
+                                    <div class="metric-mini-item">
+                                        <span class="metric-mini-val">70.1%</span>
+                                        <span class="metric-mini-lbl">Accuracy</span>
+                                    </div>
+                                    <div class="metric-mini-item">
+                                        <span class="metric-mini-val">59.5%</span>
+                                        <span class="metric-mini-lbl">Precision</span>
+                                    </div>
+                                    <div class="metric-mini-item">
+                                        <span class="metric-mini-val">23.2%</span>
+                                        <span class="metric-mini-lbl">Recall (Sensitivity)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i data-lucide="grid"></i> Confusion Matrix</h3>
+                            </div>
+                            <div class="card-body flex-center">
+                                <div class="confusion-matrix-wrapper">
+                                    <div class="cm-label-top">Predicted Class</div>
+                                    <div class="cm-layout">
+                                        <div class="cm-label-left">Actual Class</div>
+                                        <div class="cm-grid">
+                                            <div class="cm-cell cm-header-cell">No Readmit</div>
+                                            <div class="cm-cell cm-header-cell">Readmitted</div>
+                                            
+                                            <div class="cm-cell cm-side-cell">No Readmit</div>
+                                            <div class="cm-cell cm-data-cell true-negative">
+                                                <span class="cm-cell-val">626</span>
+                                                <span class="cm-cell-lbl">True Negatives</span>
+                                            </div>
+                                            <div class="cm-cell cm-data-cell false-positive">
+                                                <span class="cm-cell-val">51</span>
+                                                <span class="cm-cell-lbl">False Positives</span>
+                                            </div>
+                                            
+                                            <div class="cm-cell cm-side-cell">Readmitted</div>
+                                            <div class="cm-cell cm-data-cell false-negative">
+                                                <span class="cm-cell-val">248</span>
+                                                <span class="cm-cell-lbl">False Negatives</span>
+                                            </div>
+                                            <div class="cm-cell cm-data-cell true-positive">
+                                                <span class="cm-cell-val">75</span>
+                                                <span class="cm-cell-lbl">True Positives</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plots Grid -->
+                    <div class="analytics-charts-grid">
+                        <div class="card plot-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="line-chart"></i> Receiver Operating Characteristic (ROC)</h3>
+                            </div>
+                            <div class="card-body plot-body">
+                                <img src="assets/roc_curve.png" alt="ROC Curve" class="responsive-plot-img">
+                            </div>
+                        </div>
+
+                        <div class="card plot-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="arrow-down-narrow-wide"></i> Feature Importance Coefficients</h3>
+                            </div>
+                            <div class="card-body plot-body">
+                                <img src="assets/feature_importance.png" alt="Feature Importance Coefficients" class="responsive-plot-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Saved Evaluations History -->
+            <div class="content-panel" id="tab-history">
+                <div class="history-layout">
+                    <div class="card history-card">
+                        <div class="card-header flex-between">
+                            <h3><i data-lucide="archive"></i> Saved Clinical Evaluations</h3>
+                            <button class="btn btn-secondary btn-sm" id="btn-clear-history">
+                                <i data-lucide="trash-2"></i> Clear Log
+                            </button>
+                        </div>
+                        
+                        <div class="history-filters">
+                            <div class="search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="search-history" placeholder="Search by Patient ID...">
+                            </div>
+                            <div class="filter-box">
+                                <label for="filter-risk-level">Risk Category:</label>
+                                <select id="filter-risk-level">
+                                    <option value="ALL">All Categories</option>
+                                    <option value="Low">Low Risk</option>
+                                    <option value="Moderate">Moderate Risk</option>
+                                    <option value="High">High Risk</option>
+                                    <option value="Critical">Critical Risk</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table-custom" id="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient ID</th>
+                                        <th>Evaluation Date</th>
+                                        <th>Age / Gender</th>
+                                        <th>Admitting Diagnosis</th>
+                                        <th>Index Stay</th>
+                                        <th>Readmission Risk</th>
+                                        <th>Category</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body">
+                                    <!-- Saved entries generated dynamically in JS -->
+                                    <tr class="table-placeholder">
+                                        <td colspan="8">
+                                            <div class="table-placeholder-content">
+                                                <i data-lucide="folder-open"></i>
+                                                <p>No patient records evaluated and saved yet.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MathJax script for rendering LaTeX equations -->
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

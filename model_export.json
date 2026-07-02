@@ -1,0 +1,106 @@
+{
+  "intercept": -0.7836670062865966,
+  "coefficients": {
+    "age": 0.47128678912743216,
+    "time_in_hospital": 0.20906420508105103,
+    "num_lab_procedures": 0.09557657031099542,
+    "num_procedures": -0.07388533221707973,
+    "num_medications": 0.12999280332540245,
+    "number_outpatient": 0.02986010246523097,
+    "number_emergency": 0.14828090519140108,
+    "number_inpatient": 0.3372070184052924,
+    "number_diagnoses": 0.1066090982146178,
+    "gender_Female": -0.3774319969173122,
+    "gender_Male": -0.31956159687779057,
+    "primary_diagnosis_Circulatory": 0.0627939941904614,
+    "primary_diagnosis_Diabetes": 0.30911191746212907,
+    "primary_diagnosis_Digestive": -0.12492997970598399,
+    "primary_diagnosis_Genitourinary": -0.06670855412078368,
+    "primary_diagnosis_Injury": -0.38298460683061647,
+    "primary_diagnosis_Musculoskeletal": -0.45650629097502143,
+    "primary_diagnosis_Neoplasms": -0.09738409878352386,
+    "primary_diagnosis_Other": -0.09953700913212067,
+    "primary_diagnosis_Respiratory": 0.15915103410035583,
+    "high_A1C": 0.46768486391600256,
+    "med_change": 0.3008063300857385,
+    "on_diabetes_med": 0.1920855294854173
+  },
+  "numerical_scaling": {
+    "age": {
+      "mean": 60.2024,
+      "std": 17.561136436534756
+    },
+    "time_in_hospital": {
+      "mean": 3.932,
+      "std": 3.143970882591331
+    },
+    "num_lab_procedures": {
+      "mean": 42.4916,
+      "std": 17.686358893174695
+    },
+    "num_procedures": {
+      "mean": 1.281,
+      "std": 1.5550313902056463
+    },
+    "num_medications": {
+      "mean": 14.8352,
+      "std": 7.836116506559922
+    },
+    "number_outpatient": {
+      "mean": 0.456,
+      "std": 0.9626262669727921
+    },
+    "number_emergency": {
+      "mean": 0.1514,
+      "std": 0.5319159961172301
+    },
+    "number_inpatient": {
+      "mean": 0.2306,
+      "std": 0.682287874250063
+    },
+    "number_diagnoses": {
+      "mean": 6.7266,
+      "std": 2.007550370899405
+    }
+  },
+  "categorical_encodings": {
+    "gender": [
+      "Female",
+      "Male"
+    ],
+    "primary_diagnosis": [
+      "Circulatory",
+      "Diabetes",
+      "Digestive",
+      "Genitourinary",
+      "Injury",
+      "Musculoskeletal",
+      "Neoplasms",
+      "Other",
+      "Respiratory"
+    ]
+  },
+  "boolean_features": [
+    "high_A1C",
+    "med_change",
+    "on_diabetes_med"
+  ],
+  "metrics": {
+    "train_accuracy": 0.70325,
+    "test_accuracy": 0.701,
+    "precision": 0.5952380952380952,
+    "recall": 0.23219814241486067,
+    "f1_score": 0.33407572383073497,
+    "roc_auc": 0.6790795304361346,
+    "confusion_matrix": [
+      [
+        626,
+        51
+      ],
+      [
+        248,
+        75
+      ]
+    ]
+  }
+}
